@@ -1,0 +1,11 @@
+*.class
+*.log
+.cache
+.history
+.lib/
+.idea/*
+dist/*
+target/
+project/boot/
+project/plugins/project/
+.DS_Store
