@@ -4,6 +4,7 @@ import akka.http.scaladsl.server.Route
 import akka.stream.ActorMaterializer
 import api.MCCApi
 import com.typesafe.config.ConfigFactory
+import ml.{TaskSample, WekaConfig}
 import service.MCCService
 
 import scala.concurrent.ExecutionContext
@@ -27,4 +28,19 @@ object Main extends App {
     case Failure(ex) => ex
   }
 
+  // ML
+  val tasks = List(
+    TaskSample(42, 40.5),
+    TaskSample(52, 53.0),
+    TaskSample(62, 67.5)
+  )
+  for(t <- tasks) {
+    WekaConfig.addTrainInstance(t.toInstance, t.time)
+  }
+  WekaConfig.regressor.buildClassifier(WekaConfig.trainingData)
+
+  val testInstance = TaskSample(48, 0.0).toInstance
+  WekaConfig.addTestInstance(testInstance)
+  val prediction: Double = WekaConfig.regressor.classifyInstance(WekaConfig.testData.firstInstance())
+  print(s"Prediction: $prediction")
 }
