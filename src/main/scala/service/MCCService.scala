@@ -4,14 +4,26 @@ import java.io.File
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.server.directives.FileInfo
+import db.{TaskSample, TaskSampleRepository}
 import org.jcodec.api.transcode._
 import org.jcodec.common.{Codec, Format, JCodecUtil, Tuple}
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Random
 
 class MCCService(implicit val ec: ExecutionContext, implicit val system: ActorSystem) {
 
-  def convertFile(fileInfo: FileInfo, input: File): File = {
+  def convertAndInsert(fileInfo: FileInfo, input: File): Future[File] =
+    for {
+      file <- convertFile(input)
+      taskSample = TaskSample(size = Random.nextInt(), battery = Random.nextFloat(), time = Random.nextFloat())
+      _ <- TaskSampleRepository.insert(taskSample)
+      samples <- TaskSampleRepository.findAll()
+      _ = println(samples)
+      _ = println(fileInfo)
+    } yield file
+
+  def convertFile(input: File): Future[File] = Future {
 
     val output: File = File.createTempFile("output", ".tmp")
 

@@ -3,7 +3,7 @@ package api
 import java.io.File
 
 import akka.actor.ActorSystem
-import akka.http.scaladsl.model.{ContentTypes, HttpEntity}
+import akka.http.scaladsl.model.{ContentTypes, HttpEntity, StatusCodes}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.directives.FileInfo
@@ -11,11 +11,14 @@ import akka.stream.ActorMaterializer
 import akka.util.Timeout
 import service.MCCService
 
+import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
+import scala.util.{Failure, Success}
 
 class MCCApi(mccService: MCCService)(implicit actorSystem: ActorSystem) extends RestComponent {
 
-  implicit val materializer = ActorMaterializer()
+  implicit val materializer: ActorMaterializer = ActorMaterializer()
+  implicit val ec: ExecutionContext = actorSystem.dispatcher
   implicit val timeout: Timeout = Timeout(1.minute)
 
   private val postConvertPath = path("api" / "convert") & post
@@ -26,8 +29,10 @@ class MCCApi(mccService: MCCService)(implicit actorSystem: ActorSystem) extends 
     postConvertPath {
       storeUploadedFile("file", createTmpFile) { case (fileInfo, file) =>
         withRequestTimeout(3.minutes) {
-          val out = mccService.convertFile(fileInfo, file)
-          complete(HttpEntity.fromFile(ContentTypes.`application/octet-stream`, out))
+          onComplete(mccService.convertAndInsert(fileInfo, file)) {
+            case Success(out) => complete(HttpEntity.fromFile(ContentTypes.`application/octet-stream`, out))
+            case Failure(e) => complete(StatusCodes.BadRequest -> e)
+          }
         }
       }
     }
