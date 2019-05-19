@@ -21,7 +21,7 @@ libraryDependencies ++= {
     "io.circe"                     %% "circe-parser"                      % circeVsn,
     "org.typelevel"                %% "cats-core"                         % "1.6.0",
     "org.jcodec"                    % "jcodec"                            % "0.2.3",
-    "org.mongodb.scala"            %% "mongo-scala-driver"                % "2.6.0"
+    "org.mongodb.scala"            %% "mongo-scala-driver"                % "2.6.0",
     "org.jcodec"                    % "jcodec"                            % "0.2.3",
     "nz.ac.waikato.cms.weka"        % "weka-stable"                       % "3.8.3"
   )
