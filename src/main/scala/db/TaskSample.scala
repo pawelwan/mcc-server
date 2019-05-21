@@ -6,6 +6,7 @@ import scala.util.Random
 
 final case class TaskSample(
                              _id: ObjectId = new ObjectId(),
+                             deviceModel: String,
                              taskType: Int,
                              taskSize: Double,
                              isCharging: Boolean,
@@ -20,6 +21,7 @@ final case class TaskSample(
 object TaskSample {
   def randomLocal() = TaskSample(
     new ObjectId(),
+    Seq("A", "B", "C")(Random.nextInt(3)),
     Random.nextInt(),
     Random.nextDouble(),
     Random.nextDouble() > 0.5,
@@ -33,14 +35,15 @@ object TaskSample {
 
   def randomRemote() = TaskSample(
     new ObjectId(),
+    null,
     Random.nextInt(),
     Random.nextDouble(),
     Random.nextDouble() > 0.5,
     Random.nextDouble(),
-    Random.nextInt() % 5,
-    Random.nextInt() % 365 + 1,
-    Random.nextInt() % 7 + 1,
-    Random.nextInt() % 24*60 + 1,
+    Random.nextInt(5),
+    Random.nextInt(365) + 1,
+    Random.nextInt(7) + 1,
+    Random.nextInt(24*60) + 1,
     Random.nextDouble()
   )
 }

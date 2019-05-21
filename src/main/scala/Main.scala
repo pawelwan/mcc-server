@@ -30,11 +30,15 @@ object Main extends App {
   }
 
   // ML
+  val deviceModel = "B"
+
 //  TaskSampleRepository.populateRandom(100)
-  TaskSampleRepository.findAll() onComplete {
+  TaskSampleRepository.findLocalForDevice(deviceModel) onComplete {
     case Success(t) =>
       PredictionModelLocal.train(t)
-      print(s"Prediction for a random sample: ${PredictionModelLocal.predict(TaskSample.randomLocal())}")
+      val testSample = TaskSample.randomLocal()
+      println(s"Sample to predict: $testSample")
+      println(s"Prediction: ${PredictionModelLocal.predict(testSample)}")
     case Failure(exception) => print(exception)
   }
 }
