@@ -1,20 +1,32 @@
 package ml
 
 import java.util
-import weka.classifiers.functions.LinearRegression
+
+import db.TaskSample
 import weka.core.{Attribute, Instance, Instances}
 
-object WekaConfig {
-  val attrSize = new Attribute("attrSize")
+abstract class WekaConfig {
+  val boolValues = new util.ArrayList[String]()
+  boolValues.add("true")
+  boolValues.add("false")
+
+  val attrTaskSize = new Attribute("attrTaskSize")
+  val attrTaskType = new Attribute("attrTaskType")
+
+  val attrIsCharging = new Attribute("attrIsCharging", boolValues)
+  val attrBatteryLevel = new Attribute("attrBatteryLevel")
+  val attrConnectionType = new Attribute("attrConnectionType")
+
+  val attrYear = new Attribute("attrYear")
+  val attrWeekDay = new Attribute("attrWeekDay")
+  val attrTime = new Attribute("attrTime")
+
   val attrClass = new Attribute("class")
-  val attrs = new util.ArrayList[Attribute](util.Arrays.asList(attrSize, attrClass))
 
-  val trainingData = new Instances("train", attrs, 0)
-  val testData = new Instances("test", attrs, 0)
-  val regressor = new LinearRegression()
+  val trainingData: Instances
+  val testData: Instances
 
-  trainingData.setClass(attrClass)
-  testData.setClass(attrClass)
+  def buildInstance(taskSample: TaskSample): Instance
 
   def addTrainInstance(instance: Instance, time: Double) {
     instance.setDataset(trainingData)
@@ -22,10 +34,16 @@ object WekaConfig {
     trainingData.add(instance)
   }
 
+  def addTrainTaskSample(taskSample: TaskSample): Unit =
+    addTrainInstance(buildInstance(taskSample), taskSample.time)
+
   def addTestInstance(instance: Instance) {
     instance.setDataset(testData)
     testData.add(instance)
   }
+
+  def addTestTaskSample(taskSample: TaskSample): Unit =
+    addTestInstance(buildInstance(taskSample))
 
   def numAttributes: Int = trainingData.numAttributes()
 }

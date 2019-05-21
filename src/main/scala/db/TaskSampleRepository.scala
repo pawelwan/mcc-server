@@ -4,7 +4,6 @@ import org.bson.codecs.configuration.CodecRegistries.{fromProviders, fromRegistr
 import org.mongodb.scala.bson.codecs.DEFAULT_CODEC_REGISTRY
 import org.mongodb.scala.bson.codecs.Macros._
 import org.mongodb.scala.{Completed, MongoCollection}
-
 import scala.concurrent.Future
 
 object TaskSampleRepository {
@@ -22,4 +21,10 @@ object TaskSampleRepository {
   def findAll(): Future[Seq[TaskSample]] =
     collection.find().toFuture()
 
+  // todo debug only
+  def populateRandom(n: Int): Unit = {
+    for(_ <- 1 to n) {
+      insert(TaskSample.random())
+    }
+  }
 }

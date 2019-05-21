@@ -18,7 +18,7 @@ class MCCService(implicit val ec: ExecutionContext, implicit val system: ActorSy
   def convertAndInsert(fileInfo: FileInfo, input: File): Future[File] =
     for {
       file <- convertFile(input)
-      _ <- insertTaskSample(TaskSampleDto(Random.nextInt(), Random.nextFloat(), Random.nextFloat()))
+      _ <- insertTaskSample(TaskSampleDto(Random.nextInt(), Random.nextDouble(), Random.nextDouble() > 0.5, Random.nextDouble(), Random.nextDouble()))
       samples <- TaskSampleRepository.findAll()
       _ = println(samples)
       _ = println(fileInfo)

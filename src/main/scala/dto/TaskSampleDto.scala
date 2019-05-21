@@ -6,13 +6,15 @@ import io.circe.{Decoder, Encoder}
 
 
 final case class TaskSampleDto(
-                                size: Int,
-                                battery: Float,
-                                time: Float
+                                taskType: Int,
+                                taskSize: Double,
+                                isCharging: Boolean,
+                                batteryLevel: Double,
+                                time: Double
                               ) {
 
   def toTaskSample: TaskSample =
-    TaskSample(size = size, battery = battery, time = time)
+    TaskSample(taskType=taskType, taskSize=taskSize, isCharging=isCharging, batteryLevel=batteryLevel, time = time)
 
 }
 
