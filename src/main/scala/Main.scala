@@ -34,7 +34,7 @@ object Main extends App {
   TaskSampleRepository.findAll() onComplete {
     case Success(t) =>
       PredictionModelLocal.train(t)
-      print(s"Prediction for a random sample: ${PredictionModelLocal.predict(TaskSample.random())}")
+      print(s"Prediction for a random sample: ${PredictionModelLocal.predict(TaskSample.randomLocal())}")
     case Failure(exception) => print(exception)
   }
 }

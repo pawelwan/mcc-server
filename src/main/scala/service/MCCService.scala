@@ -1,7 +1,6 @@
 package service
 
 import java.io.File
-
 import akka.actor.ActorSystem
 import akka.http.scaladsl.server.directives.FileInfo
 import db.TaskSampleRepository
@@ -9,16 +8,13 @@ import dto.TaskSampleDto
 import org.jcodec.api.transcode._
 import org.jcodec.common.{Codec, Format, JCodecUtil, Tuple}
 import org.mongodb.scala.Completed
-
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Random
 
 class MCCService(implicit val ec: ExecutionContext, implicit val system: ActorSystem) {
 
   def convertAndInsert(fileInfo: FileInfo, input: File): Future[File] =
     for {
       file <- convertFile(input)
-      _ <- insertTaskSample(TaskSampleDto(Random.nextInt(), Random.nextDouble(), Random.nextDouble() > 0.5, Random.nextDouble(), Random.nextDouble()))
       samples <- TaskSampleRepository.findAll()
       _ = println(samples)
       _ = println(fileInfo)

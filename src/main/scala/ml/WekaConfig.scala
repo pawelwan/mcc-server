@@ -10,16 +10,23 @@ abstract class WekaConfig {
   boolValues.add("true")
   boolValues.add("false")
 
+  val connectionTypeValues = new util.ArrayList[String]()
+  connectionTypeValues.add("none")
+  connectionTypeValues.add("wifi")
+  connectionTypeValues.add("2g")
+  connectionTypeValues.add("3g")
+  connectionTypeValues.add("4g")
+
   val attrTaskSize = new Attribute("attrTaskSize")
   val attrTaskType = new Attribute("attrTaskType")
 
   val attrIsCharging = new Attribute("attrIsCharging", boolValues)
   val attrBatteryLevel = new Attribute("attrBatteryLevel")
-  val attrConnectionType = new Attribute("attrConnectionType")
+  val attrConnectionType = new Attribute("attrConnectionType", connectionTypeValues)
 
-  val attrYear = new Attribute("attrYear")
+  val attrYearDay = new Attribute("attrYearDay")
   val attrWeekDay = new Attribute("attrWeekDay")
-  val attrTime = new Attribute("attrTime")
+  val attrCurrentTime = new Attribute("attrCurrentTime")
 
   val attrClass = new Attribute("class")
 

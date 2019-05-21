@@ -10,11 +10,24 @@ final case class TaskSampleDto(
                                 taskSize: Double,
                                 isCharging: Boolean,
                                 batteryLevel: Double,
+                                connectionType: Int,       // todo enum
+                                yearDay: Int,
+                                weekDay: Int,
+                                currentTime: Int,
                                 time: Double
                               ) {
 
   def toTaskSample: TaskSample =
-    TaskSample(taskType=taskType, taskSize=taskSize, isCharging=isCharging, batteryLevel=batteryLevel, time = time)
+    TaskSample(
+      taskType=taskType,
+      taskSize=taskSize,
+      isCharging=isCharging,
+      batteryLevel=batteryLevel,
+      connectionType=connectionType,
+      yearDay=yearDay,
+      weekDay=weekDay,
+      currentTime=currentTime,
+      time=time)
 
 }
 

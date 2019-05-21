@@ -12,7 +12,7 @@ object TaskSampleRepository {
 
   private val collection: MongoCollection[TaskSample] = DbConnection.db
     .withCodecRegistry(codecRegistry)
-    .getCollection("task_samples")
+    .getCollection("local_task_samples")
 
 
   def insert(taskSample: TaskSample): Future[Completed] =
@@ -21,10 +21,10 @@ object TaskSampleRepository {
   def findAll(): Future[Seq[TaskSample]] =
     collection.find().toFuture()
 
-  // todo debug only
+  // debug only
   def populateRandom(n: Int): Unit = {
     for(_ <- 1 to n) {
-      insert(TaskSample.random())
+      insert(TaskSample.randomLocal())
     }
   }
 }
