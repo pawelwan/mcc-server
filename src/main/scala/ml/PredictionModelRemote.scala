@@ -8,6 +8,7 @@ object PredictionModelRemote extends PredictionModel {
     WekaConfigRemote.trainingData.delete()
     taskSamples foreach WekaConfigRemote.addTrainTaskSample
     WekaConfigRemote.regressor.buildClassifier(WekaConfigLocal.trainingData)
+    saveClassifier(WekaConfigRemote.regressor, "remote.weka")
   }
 
   def predict(taskSample: TaskSample): Double = {
