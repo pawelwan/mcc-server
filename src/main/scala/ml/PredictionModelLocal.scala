@@ -6,7 +6,8 @@ import weka.classifiers.AbstractClassifier
 object PredictionModelLocal extends PredictionModel {
   def train(taskSamples: Seq[TaskSample]): Unit = {
     println(s"Training a local model with ${taskSamples.size} samples")
-    val deviceModel = "B"   // todo
+    val deviceModel = taskSamples.head.deviceModel
+    assert(taskSamples.forall(_.deviceModel == deviceModel))
     WekaConfigLocal.trainingData.delete()
     taskSamples foreach WekaConfigLocal.addTrainTaskSample
 
@@ -15,15 +16,12 @@ object PredictionModelLocal extends PredictionModel {
       case None => WekaConfigLocal.addRegressor(deviceModel)
     }
     model.buildClassifier(WekaConfigLocal.trainingData)
-
   }
 
   def predict(taskSample: TaskSample): Double = {
     WekaConfigLocal.addTestTaskSample(taskSample)
 
     val model = WekaConfigLocal.regressors.get(taskSample.deviceModel)
-    println(WekaConfigLocal.regressors.keys)
-    println(taskSample.deviceModel)
     println(model)
     model match {
       case Some(clf: AbstractClassifier) => clf.classifyInstance(WekaConfigLocal.testData.lastInstance())

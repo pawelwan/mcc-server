@@ -12,13 +12,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class MCCService(implicit val ec: ExecutionContext, implicit val system: ActorSystem) {
 
-  def convertAndInsert(fileInfo: FileInfo, input: File): Future[File] =     // todo
-    for {
-      file <- convertFile(input)
-      _ = println(fileInfo)
-    } yield file
-
-  def convertFile(input: File): Future[File] = Future {
+  def convertFile(fileInfo: FileInfo, input: File): Future[File] = Future {
 
     val output: File = File.createTempFile("output", ".tmp")
 
@@ -39,12 +33,16 @@ class MCCService(implicit val ec: ExecutionContext, implicit val system: ActorSy
     val transcoder: Transcoder = builder.create()
     transcoder.transcode()
 
+    println(fileInfo)
     output
   }
 
-  def insertTaskSample(dto: TaskSampleDto): Future[Completed] =
+  def insertTaskSample(dto: TaskSampleDto): Future[Completed] = {
+    println(s"Inserting $dto")
+
     dto.deviceModel match {
       case m if m.isEmpty => TaskSampleRepository.insertRemote(dto.toTaskSample)
       case _ => TaskSampleRepository.insertLocal(dto.toTaskSample)
     }
+  }
 }

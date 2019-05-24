@@ -11,11 +11,13 @@ abstract class WekaConfig {
   boolValues.add("false")
 
   val connectionTypeValues = new util.ArrayList[String]()
-  connectionTypeValues.add("none")
-  connectionTypeValues.add("wifi")
-  connectionTypeValues.add("2g")
-  connectionTypeValues.add("3g")
-  connectionTypeValues.add("4g")
+  connectionTypeValues.add("?")
+  connectionTypeValues.add("None")
+  connectionTypeValues.add("Wi-Fi")
+  connectionTypeValues.add("EDGE")
+  connectionTypeValues.add("HSPA")
+  connectionTypeValues.add("HSPAP")
+  connectionTypeValues.add("LTE")
 
   val attrTaskSize = new Attribute("attrTaskSize")
   val attrTaskType = new Attribute("attrTaskType")
