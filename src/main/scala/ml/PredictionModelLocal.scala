@@ -16,7 +16,7 @@ object PredictionModelLocal extends PredictionModel {
       case None => WekaConfigLocal.addRegressor(deviceModel)
     }
     model.buildClassifier(WekaConfigLocal.trainingData)
-    saveClassifier(model, "local_" + deviceModel + ".weka")
+    saveClassifier(model, modelPath(deviceModel))
   }
 
   def predict(taskSample: TaskSample): Double = {
@@ -29,4 +29,7 @@ object PredictionModelLocal extends PredictionModel {
       case None => -1.0
     }
   }
+
+  def modelPath(deviceModel: String): String =
+    s"local_$deviceModel.weka"
 }

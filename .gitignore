@@ -9,3 +9,4 @@ target/
 project/boot/
 project/plugins/project/
 .DS_Store
+*.weka
