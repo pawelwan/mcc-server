@@ -40,9 +40,7 @@ class MCCService(implicit val ec: ExecutionContext, implicit val system: ActorSy
   def insertTaskSample(dto: TaskSampleDto): Future[Completed] = {
     println(s"Inserting $dto")
 
-    dto.deviceModel match {
-      case m if m.isEmpty => TaskSampleRepository.insertRemote(dto.toTaskSample)
-      case _ => TaskSampleRepository.insertLocal(dto.toTaskSample)
-    }
+    if(dto.remote) TaskSampleRepository.insertRemote(dto.toTaskSample)
+    else TaskSampleRepository.insertLocal(dto.toTaskSample)
   }
 }

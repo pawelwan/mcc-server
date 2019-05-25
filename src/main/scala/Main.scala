@@ -30,7 +30,7 @@ object Main extends App {
   }
 
   // ML
-  val testSample = TaskSample.randomLocal()
+  val testSample = TaskSample.random(false)
   val deviceModel = testSample.deviceModel
 
   TaskSampleRepository.populateRandom(10)

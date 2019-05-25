@@ -6,6 +6,7 @@ import scala.util.Random
 
 final case class TaskSample(
                              _id: ObjectId = new ObjectId(),
+                             remote: Boolean,
                              deviceModel: String,
                              taskType: Int,
                              taskSize: Double,
@@ -19,31 +20,20 @@ final case class TaskSample(
                            )
 
 object TaskSample {
-  def randomLocal() = TaskSample(
+  val connectionTypes = Seq("?", "None", "Wi-Fi", "EDGE", "HSPA", "HSPAP", "LTE")
+
+  def random(remote: Boolean) = TaskSample(
     new ObjectId(),
+    remote,
     Seq("A", "B", "C")(Random.nextInt(3)),
     Random.nextInt(),
     Random.nextDouble(),
     Random.nextDouble() > 0.5,
     Random.nextDouble(),
-    "?",
-    0,
-    0,
-    0,
-    Random.nextDouble()
-  )
-
-  def randomRemote() = TaskSample(
-    new ObjectId(),
-    null,
-    Random.nextInt(),
-    Random.nextDouble(),
-    Random.nextDouble() > 0.5,
-    Random.nextDouble(),
-    "?",
-    Random.nextInt(365) + 1,
-    Random.nextInt(7) + 1,
-    Random.nextInt(24*60) + 1,
+    connectionTypes(Random.nextInt(connectionTypes.length)),
+    Random.nextInt(365),
+    Random.nextInt(7),
+    Random.nextInt(24*60),
     Random.nextDouble()
   )
 }

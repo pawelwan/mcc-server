@@ -34,8 +34,8 @@ object TaskSampleRepository {
   // debug only
   def populateRandom(n: Int): Unit = {
     for(_ <- 1 to n) {
-      insertLocal(TaskSample.randomLocal())
-      insertRemote(TaskSample.randomLocal())
+      insertLocal(TaskSample.random(false))
+      insertRemote(TaskSample.random(false))
     }
   }
 }
