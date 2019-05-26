@@ -32,7 +32,7 @@ class MCCApi(mccService: MCCService)(implicit actorSystem: ActorSystem) extends 
     postConvertPath {
       storeUploadedFile("file", createTmpFile) { case (fileInfo, file) =>
         withRequestTimeout(3.minutes) {
-          onComplete(mccService.convertAndInsert(fileInfo, file)) {
+          onComplete(mccService.convertFile(fileInfo, file)) {
             case Success(out) => complete(HttpEntity.fromFile(ContentTypes.`application/octet-stream`, out))
             case Failure(e) => complete(StatusCodes.BadRequest -> e)
           }
