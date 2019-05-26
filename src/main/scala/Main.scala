@@ -5,7 +5,7 @@ import akka.stream.ActorMaterializer
 import api.MCCApi
 import com.typesafe.config.ConfigFactory
 import db.{TaskSample, TaskSampleRepository}
-import ml.PredictionModelLocal
+import ml.{PredictionModelLocal, PredictionModelRemote}
 import service.MCCService
 
 import scala.concurrent.ExecutionContext
@@ -33,12 +33,16 @@ object Main extends App {
   val testSample = TaskSample.random(false)
   val deviceModel = testSample.deviceModel
 
-  TaskSampleRepository.populateRandom(10)
-  TaskSampleRepository.findLocalForDevice(deviceModel) onComplete {
-    case Success(t) =>
-      PredictionModelLocal.train(t)
-      println(s"Sample to predict: $testSample")
-      println(s"Prediction: ${PredictionModelLocal.predict(testSample)}")
-    case Failure(exception) => print(exception)
+  for {
+    _ <- TaskSampleRepository.populateRandom(10)
+    local <- TaskSampleRepository.findLocalForDevice(deviceModel)
+    remote <- TaskSampleRepository.findAllRemote()
+  } yield {
+      PredictionModelLocal.train(local)
+      println(s"Sample to predict local: $testSample")
+      println(s"Local prediction: ${PredictionModelLocal.predict(testSample)}")
+      PredictionModelRemote.train(remote)
+      println(s"Sample to predict remote: $testSample")
+      println(s"Remote prediction: ${PredictionModelRemote.predict(testSample)}")
   }
 }

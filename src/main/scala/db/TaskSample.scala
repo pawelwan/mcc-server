@@ -33,7 +33,7 @@ object TaskSample {
     connectionTypes(Random.nextInt(connectionTypes.length)),
     Random.nextInt(365),
     Random.nextInt(7),
-    Random.nextInt(24*60),
+    Random.nextInt(24 * 60),
     Random.nextDouble()
   )
 }

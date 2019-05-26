@@ -25,8 +25,9 @@ class MCCApi(mccService: MCCService)(implicit actorSystem: ActorSystem) extends 
 
   private val postConvertPath = path("api" / "convert") & post
   private val postTaskPath = path("api" / "task") & post
+  private val getModelPath = path("api" / "model" / Segment / Segment.?) & get
 
-  val routes: Route = postConvertRoute ~ postTaskRoute
+  val routes: Route = postConvertRoute ~ postTaskRoute ~ getModelRoute
 
   private def postConvertRoute: Route =
     postConvertPath {
@@ -50,6 +51,13 @@ class MCCApi(mccService: MCCService)(implicit actorSystem: ActorSystem) extends 
       }
     }
 
+  private def getModelRoute: Route =
+    getModelPath { (modelType, deviceModel) =>
+      mccService.downloadModel(modelType, deviceModel) match {
+        case Some(file) => complete(HttpEntity.fromFile(ContentTypes.`application/octet-stream`, file))
+        case None => complete(StatusCodes.BadRequest -> "No such model")
+      }
+    }
 
   private def createTmpFile(fileInfo: FileInfo): File =
     File.createTempFile(fileInfo.fileName, ".tmp")

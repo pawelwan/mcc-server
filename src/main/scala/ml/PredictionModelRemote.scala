@@ -8,11 +8,15 @@ object PredictionModelRemote extends PredictionModel {
     WekaConfigRemote.trainingData.delete()
     taskSamples foreach WekaConfigRemote.addTrainTaskSample
     WekaConfigRemote.regressor.buildClassifier(WekaConfigLocal.trainingData)
-    saveClassifier(WekaConfigRemote.regressor, "remote.weka")
+    saveClassifier(WekaConfigRemote.regressor, modelPath)
   }
 
   def predict(taskSample: TaskSample): Double = {
     WekaConfigRemote.addTestTaskSample(taskSample)
     WekaConfigRemote.regressor.classifyInstance(WekaConfigRemote.testData.lastInstance())
   }
+
+  val modelPath: String =
+    "remote.weka"
+
 }
