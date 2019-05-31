@@ -3,7 +3,7 @@ package ml
 import java.util
 
 import db.TaskSample
-import weka.classifiers.functions.LinearRegression
+import weka.classifiers.trees.RandomForest
 import weka.core.{Attribute, DenseInstance, Instance, Instances}
 
 object WekaConfigRemote extends WekaConfig {
@@ -13,7 +13,7 @@ object WekaConfigRemote extends WekaConfig {
 
   val trainingData = new Instances("train", attrs, 0)
   val testData = new Instances("test", attrs, 0)
-  val regressor = new LinearRegression()
+  val regressor = new RandomForest()
 
   trainingData.setClass(attrClass)
   testData.setClass(attrClass)
