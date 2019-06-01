@@ -51,12 +51,12 @@ class MCCService(implicit val ec: ExecutionContext, implicit val system: ActorSy
   def trainModel(dto: TaskSampleDto): Unit = {
     if(dto.remote) {
       TaskSampleRepository.findAllRemote().onComplete {
-        case Success(taskSamples) => PredictionModelLocal.train(taskSamples)
+        case Success(taskSamples) => PredictionModelRemote.train(taskSamples)
         case Failure(e) => println(e)
       }
     } else {
       TaskSampleRepository.findLocalForDevice(dto.deviceModel).onComplete {
-        case Success(taskSamples) => PredictionModelRemote.train(taskSamples)
+        case Success(taskSamples) => PredictionModelLocal.train(taskSamples)
         case Failure(e) => println(e)
       }
     }

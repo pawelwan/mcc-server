@@ -7,7 +7,7 @@ object PredictionModelRemote extends PredictionModel {
     println(s"Training a remote model with ${taskSamples.size} samples")
     WekaConfigRemote.trainingData.delete()
     taskSamples foreach WekaConfigRemote.addTrainTaskSample
-    WekaConfigRemote.regressor.buildClassifier(WekaConfigLocal.trainingData)
+    WekaConfigRemote.regressor.buildClassifier(WekaConfigRemote.trainingData)
     saveClassifier(WekaConfigRemote.regressor, modelPath)
   }
 
