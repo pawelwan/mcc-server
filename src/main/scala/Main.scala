@@ -4,8 +4,6 @@ import akka.http.scaladsl.server.Route
 import akka.stream.ActorMaterializer
 import api.MCCApi
 import com.typesafe.config.ConfigFactory
-import db.{TaskSample, TaskSampleRepository}
-import ml.{PredictionModelLocal, PredictionModelRemote}
 import service.MCCService
 
 import scala.concurrent.ExecutionContext
@@ -27,22 +25,5 @@ object Main extends App {
   Http().bindAndHandle(Route.seal(mccApi.routes), host, port).onComplete {
     case Success(_) => println(s"Listening on $host:$port!")
     case Failure(ex) => ex
-  }
-
-  // ML
-  val testSample = TaskSample.random(false)
-  val deviceModel = testSample.deviceModel
-
-  for {
-    _ <- TaskSampleRepository.populateRandom(10)
-    local <- TaskSampleRepository.findLocalForDevice(deviceModel)
-    remote <- TaskSampleRepository.findAllRemote()
-  } yield {
-      PredictionModelLocal.train(local)
-      println(s"Sample to predict local: $testSample")
-      println(s"Local prediction: ${PredictionModelLocal.predict(testSample)}")
-      PredictionModelRemote.train(remote)
-      println(s"Sample to predict remote: $testSample")
-      println(s"Remote prediction: ${PredictionModelRemote.predict(testSample)}")
   }
 }

@@ -4,7 +4,7 @@ import java.util
 
 import db.TaskSample
 import weka.classifiers.AbstractClassifier
-import weka.classifiers.functions.LinearRegression
+import weka.classifiers.trees.RandomForest
 import weka.core.{Attribute, DenseInstance, Instance, Instances}
 
 object WekaConfigLocal extends WekaConfig {
@@ -14,14 +14,14 @@ object WekaConfigLocal extends WekaConfig {
 
   val trainingData = new Instances("train", attrs, 0)
   val testData = new Instances("test", attrs, 0)
-  val regressors: scala.collection.mutable.Map[String, LinearRegression] =
-    scala.collection.mutable.Map[String, LinearRegression]()
+  val regressors: scala.collection.mutable.Map[String, RandomForest] =
+    scala.collection.mutable.Map[String, RandomForest]()
 
   trainingData.setClass(attrClass)
   testData.setClass(attrClass)
 
   def addRegressor(deviceModel: String): AbstractClassifier ={
-    val model = new LinearRegression()
+    val model = new RandomForest()
     regressors += (deviceModel -> model)
     model
   }

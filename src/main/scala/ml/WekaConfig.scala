@@ -19,6 +19,13 @@ abstract class WekaConfig {
   connectionTypeValues.add("HSPAP")
   connectionTypeValues.add("LTE")
 
+  val classValues = new util.ArrayList[String]()
+  classValues.add("V_SHORT")
+  classValues.add("SHORT")
+  classValues.add("MEDIUM")
+  classValues.add("LONG")
+  classValues.add("V_LONG")
+
   val attrTaskSize = new Attribute("attrTaskSize")
   val attrTaskType = new Attribute("attrTaskType")
 
@@ -30,21 +37,21 @@ abstract class WekaConfig {
   val attrWeekDay = new Attribute("attrWeekDay")
   val attrCurrentTime = new Attribute("attrCurrentTime")
 
-  val attrClass = new Attribute("class")
+  val attrClass = new Attribute("class", classValues)
 
   val trainingData: Instances
   val testData: Instances
 
   def buildInstance(taskSample: TaskSample): Instance
 
-  def addTrainInstance(instance: Instance, time: Double) {
+  def addTrainInstance(instance: Instance, time: String) {
     instance.setDataset(trainingData)
     instance.setClassValue(time)
     trainingData.add(instance)
   }
 
   def addTrainTaskSample(taskSample: TaskSample): Unit =
-    addTrainInstance(buildInstance(taskSample), taskSample.time)
+    addTrainInstance(buildInstance(taskSample), taskSample.timeRange)
 
   def addTestInstance(instance: Instance) {
     instance.setDataset(testData)

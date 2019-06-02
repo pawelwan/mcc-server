@@ -12,7 +12,6 @@ import akka.util.Timeout
 import dto.TaskSampleDto
 import org.mongodb.scala.Completed
 import service.MCCService
-
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
 import scala.util.{Failure, Success}
@@ -45,7 +44,9 @@ class MCCApi(mccService: MCCService)(implicit actorSystem: ActorSystem) extends 
     postTaskPath {
       entity(as[TaskSampleDto]) { dto =>
         onComplete(mccService.insertTaskSample(dto)) {
-          case Success(Completed()) => complete(StatusCodes.OK)
+          case Success(Completed()) =>
+            mccService.trainModel(dto)
+            complete(StatusCodes.OK)
           case Failure(e) => complete(StatusCodes.BadRequest -> e)
         }
       }

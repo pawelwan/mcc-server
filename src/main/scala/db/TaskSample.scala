@@ -16,11 +16,12 @@ final case class TaskSample(
                              yearDay: Int,
                              weekDay: Int,
                              currentTime: Int,
-                             time: Double
+                             timeRange: String
                            )
 
 object TaskSample {
   val connectionTypes = Seq("?", "None", "Wi-Fi", "EDGE", "HSPA", "HSPAP", "LTE")
+  val timeRangeTypes = Seq("V_SHORT", "SHORT", "MEDIUM", "LONG", "V_LONG")
 
   def random(remote: Boolean) = TaskSample(
     new ObjectId(),
@@ -34,6 +35,6 @@ object TaskSample {
     Random.nextInt(365),
     Random.nextInt(7),
     Random.nextInt(24 * 60),
-    Random.nextDouble()
+    timeRangeTypes (Random.nextInt(timeRangeTypes .length))
   )
 }

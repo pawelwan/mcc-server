@@ -12,6 +12,7 @@ import org.jcodec.common.{Codec, Format, JCodecUtil, Tuple}
 import org.mongodb.scala.Completed
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success}
 
 class MCCService(implicit val ec: ExecutionContext, implicit val system: ActorSystem) {
 
@@ -45,6 +46,20 @@ class MCCService(implicit val ec: ExecutionContext, implicit val system: ActorSy
 
     if(dto.remote) TaskSampleRepository.insertRemote(dto.toTaskSample)
     else TaskSampleRepository.insertLocal(dto.toTaskSample)
+  }
+
+  def trainModel(dto: TaskSampleDto): Unit = {
+    if(dto.remote) {
+      TaskSampleRepository.findAllRemote().onComplete {
+        case Success(taskSamples) => PredictionModelRemote.train(taskSamples)
+        case Failure(e) => println(e)
+      }
+    } else {
+      TaskSampleRepository.findLocalForDevice(dto.deviceModel).onComplete {
+        case Success(taskSamples) => PredictionModelLocal.train(taskSamples)
+        case Failure(e) => println(e)
+      }
+    }
   }
 
   def downloadModel(modelType: String, maybeDeviceModel: Option[String]): Option[File] = {
