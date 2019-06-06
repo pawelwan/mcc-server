@@ -12,9 +12,10 @@ import org.jcodec.common.{Codec, Format, JCodecUtil, Tuple}
 import org.mongodb.scala.Completed
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success}
 
 class MCCService(implicit val ec: ExecutionContext, implicit val system: ActorSystem) {
+
+  private val trainPeriod = 10
 
   def convertFile(fileInfo: FileInfo, input: File): Future[File] = Future {
 
@@ -25,7 +26,7 @@ class MCCService(implicit val ec: ExecutionContext, implicit val system: ActorSy
       Tuple._3(0, 0, Codec.H264),
       Tuple._3(0, 0, Codec.AAC)
     )
-    val sink: Sink = new SinkImpl(output.getAbsolutePath, Format.MOV, Codec.PRORES, Codec.AAC)
+    val sink: Sink = new SinkImpl(output.getAbsolutePath, Format.MOV, Codec.H264, Codec.AAC)
     sink.setOption(Options.PROFILE, "PROXY")
 
     val builder = Transcoder.newTranscoder()
@@ -44,23 +45,25 @@ class MCCService(implicit val ec: ExecutionContext, implicit val system: ActorSy
   def insertTaskSample(dto: TaskSampleDto): Future[Completed] = {
     println(s"Inserting $dto")
 
-    if(dto.remote) TaskSampleRepository.insertRemote(dto.toTaskSample)
+    if (dto.remote) TaskSampleRepository.insertRemote(dto.toTaskSample)
     else TaskSampleRepository.insertLocal(dto.toTaskSample)
   }
 
-  def trainModel(dto: TaskSampleDto): Unit = {
-    if(dto.remote) {
-      TaskSampleRepository.findAllRemote().onComplete {
-        case Success(taskSamples) => PredictionModelRemote.train(taskSamples)
-        case Failure(e) => println(e)
-      }
-    } else {
-      TaskSampleRepository.findLocalForDevice(dto.deviceModel).onComplete {
-        case Success(taskSamples) => PredictionModelLocal.train(taskSamples)
-        case Failure(e) => println(e)
-      }
-    }
-  }
+  def trainModel(dto: TaskSampleDto): Future[Completed] =
+    if (dto.remote) trainRemoteModel()
+    else trainLocalModel(dto.deviceModel)
+
+  private def trainRemoteModel(): Future[Completed] =
+    for {
+      taskSamples <- TaskSampleRepository.findAllRemote()
+      _ = if (taskSamples.size % trainPeriod == 1) PredictionModelRemote.train(taskSamples)
+    } yield Completed()
+
+  private def trainLocalModel(deviceModel: String): Future[Completed] =
+    for {
+      taskSamples <- TaskSampleRepository.findLocalForDevice(deviceModel)
+      _ = if (taskSamples.size % trainPeriod == 1) PredictionModelLocal.train(taskSamples)
+    } yield Completed()
 
   def downloadModel(modelType: String, maybeDeviceModel: Option[String]): Option[File] = {
     val fileName = modelType match {
