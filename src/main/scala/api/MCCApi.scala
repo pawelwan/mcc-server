@@ -56,7 +56,7 @@ class MCCApi(mccService: MCCService)(implicit actorSystem: ActorSystem) extends 
     getModelPath { (modelType, deviceModel) =>
       mccService.downloadModel(modelType, deviceModel) match {
         case Some(file) => complete(HttpEntity.fromFile(ContentTypes.`application/octet-stream`, file))
-        case None => complete(StatusCodes.BadRequest -> "No such model")
+        case None => complete(StatusCodes.NotFound -> "No such model")
       }
     }
 
