@@ -16,6 +16,7 @@ final case class TaskSampleDto(
                                 yearDay: Int,
                                 weekDay: Int,
                                 currentTime: Int,
+                                time: Double,
                                 timeRange: String
                               ) {
 
@@ -31,6 +32,7 @@ final case class TaskSampleDto(
       yearDay=yearDay,
       weekDay=weekDay,
       currentTime=currentTime,
+      time=time,
       timeRange=timeRange)
 
 }

@@ -56,13 +56,37 @@ class MCCService(implicit val ec: ExecutionContext, implicit val system: ActorSy
   private def trainRemoteModel(): Future[Completed] =
     for {
       taskSamples <- TaskSampleRepository.findAllRemote()
-      _ = if (taskSamples.size % trainPeriod == 1) PredictionModelRemote.train(taskSamples)
+      _ = if (taskSamples.size > 20 && taskSamples.size % trainPeriod == 1) PredictionModelRemote.train(taskSamples)
+    } yield Completed()
+
+  def trainRemoteModel2(): Future[Completed] =
+    for {
+      taskSamples <- TaskSampleRepository.findAllRemote()
+      _ = PredictionModelRemote.train(taskSamples)
+    } yield Completed()
+
+  def evalRemote(): Future[Completed] =
+    for {
+      taskSamples <- TaskSampleRepository.findAllRemote()
+      _ = taskSamples.map(PredictionModelRemote.predict)
+    } yield Completed()
+
+  def evalLocal(): Future[Completed] =
+    for {
+      taskSamples <- TaskSampleRepository.findLocalForDevice("SM-J330F")
+      _ = taskSamples.map(PredictionModelLocal.predict)
     } yield Completed()
 
   private def trainLocalModel(deviceModel: String): Future[Completed] =
     for {
       taskSamples <- TaskSampleRepository.findLocalForDevice(deviceModel)
-      _ = if (taskSamples.size % trainPeriod == 1) PredictionModelLocal.train(taskSamples)
+      _ = if (taskSamples.size > 20 && taskSamples.size % trainPeriod == 1) PredictionModelLocal.train(taskSamples)
+    } yield Completed()
+
+  def trainLocalModel2(): Future[Completed] =
+    for {
+      taskSamples <- TaskSampleRepository.findLocalForDevice("SM-J330F")
+      _ = PredictionModelLocal.train(taskSamples)
     } yield Completed()
 
   def downloadModel(modelType: String, maybeDeviceModel: Option[String]): Option[File] = {

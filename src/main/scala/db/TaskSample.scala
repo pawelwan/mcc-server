@@ -16,6 +16,7 @@ final case class TaskSample(
                              yearDay: Int,
                              weekDay: Int,
                              currentTime: Int,
+                             time: Double,
                              timeRange: String
                            )
 
@@ -35,6 +36,7 @@ object TaskSample {
     Random.nextInt(365),
     Random.nextInt(7),
     Random.nextInt(24 * 60),
+    Random.nextDouble()*5,
     timeRangeTypes (Random.nextInt(timeRangeTypes .length))
   )
 }
